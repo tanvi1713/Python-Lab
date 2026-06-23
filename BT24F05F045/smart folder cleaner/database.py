@@ -28,6 +28,7 @@ def init_db():
 
 def log_to_db(folder_path, moved, deleted, summary):
     """Log a cleanup operation to the database."""
+    conn = None
     try:
         conn = sqlite3.connect(DB_PATH)
         conn.execute(
@@ -35,23 +36,30 @@ def log_to_db(folder_path, moved, deleted, summary):
             (folder_path, moved, deleted, summary)
         )
         conn.commit()
-        conn.close()
-    except Exception:
+    except sqlite3.Error:
         pass
+    finally:
+        if conn:
+            conn.close()
 
 
 def fetch_logs(limit=30):
     """Fetch the most recent cleanup logs from the database."""
+    conn = None
     try:
+        limit = int(limit)
         conn = sqlite3.connect(DB_PATH)
         conn.row_factory = sqlite3.Row
         rows = conn.execute(
-            f"SELECT * FROM cleanup_logs ORDER BY created_at DESC LIMIT {limit}"
+            "SELECT * FROM cleanup_logs ORDER BY created_at DESC LIMIT ?",
+            (limit,)
         ).fetchall()
-        conn.close()
         return [dict(r) for r in rows]
-    except Exception:
+    except (sqlite3.Error, ValueError, TypeError):
         return []
+    finally:
+        if conn:
+            conn.close()
 
 
 def build_report(folder_path, result):
