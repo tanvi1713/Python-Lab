@@ -7,11 +7,14 @@ import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import threading
 import os
+import logging
 from datetime import datetime
 
 import config
 from core import scan_folder, execute_cleaning, format_size
 from database import init_db, log_to_db, fetch_logs, build_report
+
+logger = logging.getLogger(__name__)
 
 
 class SmartCleanerApp:
@@ -451,8 +454,8 @@ class SmartCleanerApp:
         for w in labels:
             try:
                 w.config(bg=config.COLORS["bg"], fg=config.COLORS["fg2"])
-            except Exception:
-                pass
+            except (tk.TclError, KeyError) as e:
+                logger.debug("Could not theme widget %s: %s", w.winfo_class(), e)
 
     def _select_all_dupes(self):
         """DEPRECATED: Kept for backward compatibility. Use _delete_selected_dupes instead."""
@@ -1050,15 +1053,15 @@ class SmartCleanerApp:
         if wtype in ("Frame", "Labelframe"):
             try:
                 widget.config(bg=config.COLORS["bg"])
-            except Exception:
-                pass
+            except (tk.TclError, KeyError) as e:
+                logger.debug("Could not theme Frame %s: %s", widget, e)
 
         # Labels
         elif wtype == "Label":
             try:
                 widget.config(bg=config.COLORS["bg"], fg=config.COLORS["fg"])
-            except Exception:
-                pass
+            except (tk.TclError, KeyError) as e:
+                logger.debug("Could not theme Label %s: %s", widget, e)
 
         # Buttons
         elif wtype == "Button":
@@ -1067,8 +1070,8 @@ class SmartCleanerApp:
                               activebackground=config.COLORS["hover"],
                               activeforeground=config.COLORS["accent"],
                               highlightbackground=config.COLORS["border"])
-            except Exception:
-                pass
+            except (tk.TclError, KeyError) as e:
+                logger.debug("Could not theme Button %s: %s", widget, e)
 
         # Entry
         elif wtype == "Entry":
@@ -1077,8 +1080,8 @@ class SmartCleanerApp:
                               insertbackground=config.COLORS["accent"],
                               selectbackground=config.COLORS["accent2"],
                               disabledbackground=config.COLORS["bg2"])
-            except Exception:
-                pass
+            except (tk.TclError, KeyError) as e:
+                logger.debug("Could not theme Entry %s: %s", widget, e)
 
         # Checkbutton
         elif wtype == "Checkbutton":
@@ -1087,15 +1090,15 @@ class SmartCleanerApp:
                               activebackground=config.COLORS["bg"],
                               activeforeground=config.COLORS["accent"],
                               selectcolor=config.COLORS["bg3"])
-            except Exception:
-                pass
+            except (tk.TclError, KeyError) as e:
+                logger.debug("Could not theme Checkbutton %s: %s", widget, e)
 
         # Canvas
         elif wtype == "Canvas":
             try:
                 widget.config(bg=config.COLORS["bg"])
-            except Exception:
-                pass
+            except (tk.TclError, KeyError) as e:
+                logger.debug("Could not theme Canvas %s: %s", widget, e)
 
         # Special overrides for named widgets
         try:
@@ -1147,8 +1150,8 @@ class SmartCleanerApp:
                 widget.config(fg=config.COLORS["fg"])
             elif widget is self._hist_title:
                 widget.config(fg=config.COLORS["fg"])
-        except Exception:
-            pass
+        except (tk.TclError, KeyError, AttributeError) as e:
+            logger.debug("Could not apply special theme override: %s", e)
 
         # Cat cards
         if hasattr(widget, "_is_cat_card"):
@@ -1166,5 +1169,5 @@ class SmartCleanerApp:
             widget.config(bg=config.COLORS[bg_key])
             if fg:
                 widget.config(fg=config.COLORS[fg])
-        except Exception:
-            pass
+        except (tk.TclError, KeyError) as e:
+            logger.debug("Could not theme widget %s: %s", widget.winfo_class(), e)

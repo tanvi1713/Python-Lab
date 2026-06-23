@@ -92,8 +92,8 @@ files = [csv_file, csv_file2, csv_file3, marks_file, csv_file_eng]
 for f in files:
     try:
         __import__('os').remove(f)
-    except:
-        pass
+    except (OSError, FileNotFoundError):
+        pass  # file may not exist or is already removed
 
 
 

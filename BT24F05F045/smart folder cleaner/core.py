@@ -7,7 +7,10 @@ import os
 import shutil
 import hashlib
 import json
+import logging
 from config import FILE_CATEGORIES
+
+logger = logging.getLogger(__name__)
 
 
 def get_file_category(filename):
@@ -27,7 +30,8 @@ def compute_hash(filepath):
             for chunk in iter(lambda: f.read(8192), b""):
                 h.update(chunk)
         return h.hexdigest()
-    except (OSError, PermissionError):
+    except (OSError, PermissionError) as e:
+        logger.warning("Could not hash file %s: %s", filepath, e)
         return None
 
 
