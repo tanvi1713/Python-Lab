@@ -1,31 +1,41 @@
+"""Practical 5 - Conditional Statements.
+
+Demonstrates if/elif/else using shared grading and age utilities.
+"""
+
+import sys
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from shared_utils import calculate_grade, categorize_age
+
+# --- Grade Calculator using shared utility ---
 marks = 75
 print("Student: Karan")
-if marks >= 35:
-    print("Result: Pass")
+print(f"Marks: {marks} -> Grade: {calculate_grade(marks)}")
+
 score = 82
 print("Student: Sneha")
-if score >= 60:
-    print("Grade: First Class")
-else:
-    print("Grade: Below First Class")
+print(f"Score: {score} -> Grade: {calculate_grade(score)}")
+
+# --- Age Categorization using shared utility ---
 age = 17
 print("Student: Anjali")
-if age >= 18:
-    print("Eligible to vote")
-else:
-    print("Not eligible to vote")
+print(f"Age: {age} -> {categorize_age(age)}")
+
+# --- Grade ladder (same logic, custom scale) ---
 percentage = 88
 print("Student: Ramesh")
-if percentage >= 90:
-    print("Grade: O")
-elif percentage >= 80:
-    print("Grade: A")
-elif percentage >= 70:
-    print("Grade: B")
-elif percentage >= 60:
-    print("Grade: C")
-else:
-    print("Grade: Fail")
+LETTER_SCALE = [
+    (90, "O"),
+    (80, "A"),
+    (70, "B"),
+    (60, "C"),
+]
+print(f"Percentage: {percentage} -> Grade: {calculate_grade(percentage, scale=LETTER_SCALE, fail_label='Fail')}")
+
+# --- Simple positive/negative check (too small to extract) ---
 num = -5
 print("Student: Karan")
 if num > 0:

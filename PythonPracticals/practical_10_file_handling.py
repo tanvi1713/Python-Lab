@@ -1,24 +1,38 @@
-file = open("vijay_data.txt", "w")
-file.write("Name: Vijay Shinde\n")
-file.write("City: Aurangabad\n")
-file.write("Course: BCA\n")
-file.close()
+"""Practical 10 - File Handling.
+
+Demonstrates file I/O using shared file_ops utilities.
+"""
+
+import sys
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
+from shared_utils import write_lines, read_file, read_lines, append_lines
+
+DATA_FILE = os.path.join(os.path.dirname(__file__), "vijay_data.txt")
+
+# --- Write ---
+write_lines(DATA_FILE, [
+    "Name: Vijay Shinde\n",
+    "City: Aurangabad\n",
+    "Course: BCA\n",
+])
 print("Student: Vijay | File written successfully.")
-file = open("vijay_data.txt", "r")
-content = file.read()
-file.close()
+
+# --- Read entire file ---
+content = read_file(DATA_FILE)
 print("Student: Sarika | File Content:\n", content)
-file = open("vijay_data.txt", "a")
-file.write("Marks: 88\n")
-file.close()
+
+# --- Append ---
+append_lines(DATA_FILE, ["Marks: 88\n"])
 print("Student: Omkar | Data appended.")
-with open("vijay_data.txt", "r") as file:
-    lines = file.readlines()
+
+# --- Read lines ---
+lines = read_lines(DATA_FILE, strip=True)
 print("Student: Omkar | Lines in file:")
 for line in lines:
-    print(line.strip())
-import os
-if os.path.exists("vijay_data.txt"):
-    print("File exists.")
-else:
-    print("File not found.")
+    print(line)
+
+# --- File existence check ---
+print("File exists." if os.path.exists(DATA_FILE) else "File not found.")
