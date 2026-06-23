@@ -7,6 +7,7 @@ import os
 import shutil
 import hashlib
 import json
+from pathlib import Path
 from config import FILE_CATEGORIES
 
 
@@ -20,9 +21,9 @@ def get_file_category(filename):
 
 
 def compute_hash(filepath):
-    """MD5-hash a file in 8 KB chunks. Returns hex string or None on error."""
+    """SHA-256 hash a file in 8 KB chunks. Returns hex string or None on error."""
     try:
-        h = hashlib.md5()
+        h = hashlib.sha256()
         with open(filepath, "rb") as f:
             for chunk in iter(lambda: f.read(8192), b""):
                 h.update(chunk)
@@ -47,6 +48,7 @@ def scan_folder(folder_path):
       files, duplicate_groups, category_summary, errors
     Does NOT modify anything on disk.
     """
+    folder_path = os.path.realpath(folder_path)
     if not os.path.isdir(folder_path):
         return {"error": "Path is not a valid directory"}
     try:
@@ -103,9 +105,10 @@ def scan_folder(folder_path):
 def execute_cleaning(folder_path, delete_hashes):
     """
     Move files into category subfolders and delete selected duplicates.
-    delete_hashes: set of MD5 hashes whose files the user chose to remove.
+    delete_hashes: set of SHA-256 hashes whose files the user chose to remove.
     Returns result summary dict.
     """
+    folder_path = os.path.realpath(folder_path)
     if not os.path.isdir(folder_path):
         return {"error": "Folder no longer exists"}
     try:
