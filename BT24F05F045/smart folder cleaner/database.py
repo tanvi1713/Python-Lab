@@ -5,8 +5,11 @@ SQLite logging, history, and report generation.
 """
 import sqlite3
 import json
+import logging
 from datetime import datetime
 from config import DB_PATH, CAT_ICONS
+
+logger = logging.getLogger(__name__)
 
 
 def init_db():
@@ -36,8 +39,8 @@ def log_to_db(folder_path, moved, deleted, summary):
         )
         conn.commit()
         conn.close()
-    except Exception:
-        pass
+    except sqlite3.Error as e:
+        logger.warning("Failed to log cleanup to database: %s", e)
 
 
 def fetch_logs(limit=30):
@@ -50,7 +53,8 @@ def fetch_logs(limit=30):
         ).fetchall()
         conn.close()
         return [dict(r) for r in rows]
-    except Exception:
+    except sqlite3.Error as e:
+        logger.warning("Failed to fetch logs from database: %s", e)
         return []
 
 

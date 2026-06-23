@@ -48,8 +48,8 @@ except FileNotFoundError:
 finally:
     try:
         file.close()
-    except:
-        pass
+    except NameError:
+        pass  # file was never opened due to the exception above
 
 try:
     with open("data.txt", 'r') as f:

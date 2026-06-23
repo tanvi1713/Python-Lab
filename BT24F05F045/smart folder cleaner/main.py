@@ -17,8 +17,8 @@ def setup_high_dpi():
     try:
         from ctypes import windll
         windll.shcore.SetProcessDpiAwareness(1)
-    except Exception:
-        pass
+    except (ImportError, AttributeError, OSError):
+        pass  # Not on Windows or DPI API unavailable
 
 
 def main():
